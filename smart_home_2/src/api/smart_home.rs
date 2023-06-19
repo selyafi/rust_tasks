@@ -1,9 +1,11 @@
-struct SmartHome {
+use std::sync::Arc;
+use crate::types::room::Room;
+
+pub struct SmartHome {
     pub name: String,
     pub username: String,
     pub password: String,
-    pub devices: Vec<Device>,
-    pub rooms: Vec<Room>
+    pub rooms: Vec<Arc<dyn Room>>
 }
 
 impl SmartHome {
@@ -12,32 +14,22 @@ impl SmartHome {
             name,
             username,
             password,
-            devices: Vec::new(),
             rooms: Vec::new(),
         }
     }
 
-    pub fn add_device(&mut self, device: Device) {
-        self.devices.push(device);
-    }
-
-    pub fn add_room(&mut self, room: Room) {
+   pub fn add_room(&mut self, room: Arc<dyn Room>) {
         self.rooms.push(room);
     }
 
-    pub fn get_device(&self, name: &str) -> Option<&Device> {
-        for device in &self.devices {
-            if device.get_name() == name {
-                return Some(device);
-            }
-        }
-        None
+    pub fn get_rooms(&self) -> Vec<Arc<dyn Room>> {
+      self.rooms.clone()
     }
 
-    pub fn get_room(&self, name: &str) -> Option<&Room> {
+    pub fn get_room(&self, name: &str) -> Option<Arc<dyn Room>> {
         for room in &self.rooms {
             if room.get_name() == name {
-                return Some(room);
+                return Some(room.clone());
             }
         }
         None

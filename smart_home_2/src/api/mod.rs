@@ -1,2 +1,2 @@
 pub mod smart_home;
-mod device_info_provider;
+pub mod device_info_provider;

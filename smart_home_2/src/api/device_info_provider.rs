@@ -1,24 +1,31 @@
-struct Report {
-    name: String,
-    value: String,
+use crate::types::device::Device;
+use crate::types::report::Report;
+use crate::types::socket::Socket;
+
+struct OwningDeviceInfoProvider<'a> {
+    device: &'a dyn Device,
 }
 
-trait DeviceInfoProvider {
-    fn get_device_info(&self, room_name: &str, device_name: &str) -> Option<&Report>;
-}
-
-struct OwningDeviceInfoProvider {
-    device: Device
-}
-
-impl DeviceInfoProvider for OwningDeviceInfoProvider {
-    fn get_device_info(&self, room_name: &str, device_name: &str) -> Option<&Report> {
-        if self.device.get_name() == device_name {
-            return Some(&Report{
-                name: self.device.get_name(),
-                value: self.device.get_value(),
-            });
-        }
-        None
+impl<'a> OwningDeviceInfoProvider<'a> {
+    fn new(device: &'a dyn Device) -> Self {
+        OwningDeviceInfoProvider { device }
+    }
+    pub fn get_device_info(&self) -> Report {
+        Report(String::from(self.device.get_name()), String::from(self.device.get_value()), "".to_string(), "".to_string())
     }
 }
+
+struct BorrowingDeviceInfoProvider<'a, 'b> {
+    socket: &'a Socket,
+    device: &'b dyn Device,
+}
+
+impl<'a, 'b> BorrowingDeviceInfoProvider<'a, 'b> {
+    fn new(socket: &'a Socket, device: &'b dyn Device) -> Self {
+        BorrowingDeviceInfoProvider { socket, device }
+    }
+    pub fn get_device_info(&self) -> Report{
+            return Report(String::from(self.device.get_name()), String::from(self.device.get_value()), String::from(self.socket.get_name()), String::from(self.socket.get_value()))
+    }
+}
+
