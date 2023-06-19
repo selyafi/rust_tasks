@@ -25,10 +25,11 @@ impl SmartHome {
         self.rooms.iter().map(|room| Box::new(room.as_ref()) as Box<&dyn Room>).collect()
     }
 
-    pub fn get_room(&self, name: &str) -> Option<Box<dyn Room>> {
+    pub fn get_room(&self, name: &str) -> Option<&Box<dyn Room>> {
         for room in &self.rooms {
             if room.get_name() == name {
-                return Some(Box::new(room.as_ref()));
+                let room =room.clone();
+                return Some(room);
             }
         }
         None
