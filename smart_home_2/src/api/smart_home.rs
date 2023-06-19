@@ -1,11 +1,10 @@
-use std::sync::Arc;
 use crate::types::room::Room;
 
 pub struct SmartHome {
     pub name: String,
     pub username: String,
     pub password: String,
-    pub rooms: Vec<Arc<dyn Room>>
+    pub rooms: Vec<Box<dyn Room>>,
 }
 
 impl SmartHome {
@@ -18,18 +17,18 @@ impl SmartHome {
         }
     }
 
-   pub fn add_room(&mut self, room: Arc<dyn Room>) {
+    pub fn add_room(&mut self, room: Box<dyn Room>) {
         self.rooms.push(room);
     }
 
-    pub fn get_rooms(&self) -> Vec<Arc<dyn Room>> {
-      self.rooms.clone()
+    pub fn get_rooms(&self) -> Vec<Box<&dyn Room>> {
+        self.rooms.iter().map(|room| Box::new(room.as_ref()) as Box<&dyn Room>).collect()
     }
 
-    pub fn get_room(&self, name: &str) -> Option<Arc<dyn Room>> {
+    pub fn get_room(&self, name: &str) -> Option<Box<dyn Room>> {
         for room in &self.rooms {
             if room.get_name() == name {
-                return Some(room.clone());
+                return Some(Box::new(room.as_ref()));
             }
         }
         None
