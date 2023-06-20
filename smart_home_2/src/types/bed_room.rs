@@ -21,6 +21,16 @@ impl Room for Bedroom {
         self.devices.push(device);
     }
 
+    fn get_device(&self, name: String) -> Option<&dyn Device> {
+        for device in &self.devices {
+            if device.get_name() == name {
+                let device = device.as_ref().clone();
+                return Some(device);
+            }
+        }
+        None
+    }
+
     fn get_socket(&self) -> &Socket { &self.socket }
 }
 

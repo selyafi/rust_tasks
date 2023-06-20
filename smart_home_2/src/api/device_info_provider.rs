@@ -2,12 +2,12 @@ use crate::types::device::Device;
 use crate::types::report::Report;
 use crate::types::socket::Socket;
 
-struct OwningDeviceInfoProvider<'a> {
+pub struct OwningDeviceInfoProvider<'a> {
     device: &'a dyn Device,
 }
 
 impl<'a> OwningDeviceInfoProvider<'a> {
-    fn new(device: &'a dyn Device) -> Self {
+   pub fn new(device: &'a dyn Device) -> Self {
         OwningDeviceInfoProvider { device }
     }
     pub fn get_device_info(&self) -> Report {
@@ -15,13 +15,13 @@ impl<'a> OwningDeviceInfoProvider<'a> {
     }
 }
 
-struct BorrowingDeviceInfoProvider<'a, 'b> {
+pub struct BorrowingDeviceInfoProvider<'a, 'b> {
     socket: &'a Socket,
     device: &'b dyn Device,
 }
 
 impl<'a, 'b> BorrowingDeviceInfoProvider<'a, 'b> {
-    fn new(socket: &'a Socket, device: &'b dyn Device) -> Self {
+    pub fn new(socket: &'a Socket, device: &'b dyn Device) -> Self {
         BorrowingDeviceInfoProvider { socket, device }
     }
     pub fn get_device_info(&self) -> Report{

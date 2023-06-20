@@ -1,3 +1,4 @@
+use crate::api::device_info_provider::BorrowingDeviceInfoProvider;
 use crate::types::room::Room;
 
 mod types;
@@ -26,5 +27,18 @@ fn main() {
     bed_room.add_device(Box::new(thermometer));
     smart_home.add_room(Box::new(bed_room));
 
-    println!("Smart Home: {}", smart_home.name);
+    let living_room_socket = {
+        let living_room = smart_home.get_room("Living Room".to_string()).unwrap();
+        living_room.get_socket()
+    };
+
+    let info_provider2 = {
+        let living_room = smart_home.get_room("Living Room".to_string()).unwrap();
+        let living_room_device_option = living_room.get_device("Thermometer".to_string()).clone();
+        let living_room_device = living_room_device_option.unwrap();
+        BorrowingDeviceInfoProvider::new(living_room_socket, living_room_device)
+    };
+
+    let report = info_provider2.get_device_info();
+    println!("Smart Home: {}", report.0);
 }
