@@ -1,6 +1,4 @@
-use crate::types::device::Device;
-use crate::types::report::Report;
-use crate::types::socket::Socket;
+use crate::types::{device::Device, report::Report, socket::Socket};
 
 pub struct OwningDeviceInfoProvider<'a> {
     device: &'a dyn Device,

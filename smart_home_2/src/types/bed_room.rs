@@ -1,5 +1,4 @@
-use crate::types::device::Device;
-use crate::types::socket::Socket;
+use crate::types::{device::Device, socket::Socket};
 use crate::types::room::Room;
 
 pub struct Bedroom {
