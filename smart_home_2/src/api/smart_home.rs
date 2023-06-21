@@ -21,7 +21,7 @@ impl SmartHome {
         self.rooms.push(room);
     }
 
-    pub fn get_rooms(&self) -> Vec<Box<&dyn Room>> {
+    pub fn _get_rooms(&self) -> Vec<Box<&dyn Room>> {
         self.rooms.iter().map(|room| Box::new(room.as_ref()) as Box<&dyn Room>).collect()
     }
 
