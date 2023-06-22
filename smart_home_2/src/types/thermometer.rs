@@ -1,22 +1,25 @@
 use crate::types::device::Device;
 
-#[derive(Clone)]
 pub struct Thermometer {
+    room: String,
     name: String,
     value: String,
 }
 
 impl Device for Thermometer {
-    fn get_name(&self) -> &str {
-        &self.name
+    fn get_room(&self) -> String {
+        self.room.to_string()
     }
-    fn get_value(&self) -> &str {
-        &self.value
+    fn get_name(&self) -> String {
+        self.name.to_string()
+    }
+    fn get_value(&self) -> String {
+        self.value.to_string()
     }
 }
 
 impl Thermometer {
-    pub fn new(name: String, value: String) -> Self {
-        Thermometer { name, value }
+    pub fn new(room: String, name: String, value: String) -> Self {
+        Thermometer { room, name, value }
     }
 }

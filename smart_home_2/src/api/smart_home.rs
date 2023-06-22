@@ -21,14 +21,14 @@ impl SmartHome {
         self.rooms.push(room);
     }
 
-    pub fn _get_rooms(&self) -> Vec<Box<&dyn Room>> {
-        self.rooms.iter().map(|room| Box::new(room.as_ref()) as Box<&dyn Room>).collect()
+    pub fn _get_rooms(&self) -> Vec<&dyn Room> {
+        self.rooms.iter().map(|room| room.as_ref()).collect()
     }
 
-    pub fn get_room(&self, name: String) -> Option<&Box<dyn Room>> {
+    pub fn get_room(&self, name: String) -> Option<&dyn Room> {
         for room in &self.rooms {
             if room.get_name() == name {
-                let room =room.clone();
+                let room = room.as_ref();
                 return Some(room);
             }
         }

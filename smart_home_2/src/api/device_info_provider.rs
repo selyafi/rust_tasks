@@ -5,11 +5,16 @@ pub struct OwningDeviceInfoProvider<'a> {
 }
 
 impl<'a> OwningDeviceInfoProvider<'a> {
-   pub fn new(device: &'a dyn Device) -> Self {
+    pub fn new(device: &'a dyn Device) -> Self {
         OwningDeviceInfoProvider { device }
     }
     pub fn get_device_info(&self) -> Report {
-        Report(String::from(self.device.get_name()), String::from(self.device.get_value()), "".to_string(), "".to_string())
+        Report {
+            room: self.device.get_name(),
+            socket: self.device.get_value(),
+            device: "".to_string(),
+            value: "".to_string(),
+        }
     }
 }
 
@@ -22,8 +27,12 @@ impl<'a, 'b> BorrowingDeviceInfoProvider<'a, 'b> {
     pub fn new(socket: &'a Socket, device: &'b dyn Device) -> Self {
         BorrowingDeviceInfoProvider { socket, device }
     }
-    pub fn get_device_info(&self) -> Report{
-            return Report(String::from(self.device.get_name()), String::from(self.device.get_value()), String::from(self.socket.get_name()), String::from(self.socket.get_value()))
+    pub fn get_device_info(&self) -> Report {
+        Report {
+            room: self.device.get_room(),
+            socket: self.socket.get_name(),
+            device: self.device.get_name(),
+            value: self.socket.get_value(),
+        }
     }
 }
-

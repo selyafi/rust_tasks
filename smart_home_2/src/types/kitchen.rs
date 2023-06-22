@@ -1,5 +1,5 @@
-use crate::types::{device::Device, room::Room};
 use crate::types::socket::Socket;
+use crate::types::{device::Device, room::Room};
 
 pub struct Kitchen {
     name: String,
@@ -12,8 +12,8 @@ impl Room for Kitchen {
         &self.name
     }
 
-    fn get_devices(&self) -> Vec<Box<&dyn Device>> {
-        self.devices.iter().map(|device| Box::new(device.as_ref()) as Box<&dyn Device>).collect()
+    fn get_devices(&self) -> Vec<&dyn Device> {
+        self.devices.iter().map(|device| device.as_ref()).collect()
     }
 
     fn add_device(&mut self, device: Box<dyn Device>) {
@@ -23,14 +23,16 @@ impl Room for Kitchen {
     fn get_device(&self, name: String) -> Option<&dyn Device> {
         for device in &self.devices {
             if device.get_name() == name {
-                let device = device.as_ref().clone();
+                let device = device.as_ref();
                 return Some(device);
             }
         }
         None
     }
 
-    fn get_socket(&self) -> &Socket { &self.socket }
+    fn get_socket(&self) -> &Socket {
+        &self.socket
+    }
 }
 
 impl Kitchen {
