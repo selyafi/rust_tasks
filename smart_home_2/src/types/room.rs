@@ -1,9 +1,41 @@
-use crate::types::{device::Device, socket::Socket};
+use crate::types::device::Device;
+use crate::types::socket::Socket;
 
-pub trait Room {
-    fn get_name(&self) -> &str;
-    fn get_devices(&self) -> Vec<&dyn Device>;
-    fn get_device(&self, name: String) -> Option<&dyn Device>;
-    fn add_device(&mut self, device: Box<dyn Device>);
-    fn get_socket(&self) -> &Socket;
+pub struct Room {
+    name: String,
+    devices: Vec<Box<dyn Device>>,
+    socket: Socket,
+}
+
+impl Room {
+    pub fn new(name: String, socket: Socket, devices: Vec<Box<dyn Device>>) -> Self {
+        Self {
+            name,
+            socket,
+            devices,
+        }
+    }
+
+    pub fn get_name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn get_device(&self, name: String) -> Option<&dyn Device> {
+        self.devices
+            .iter()
+            .find(|d| d.get_name() == name)
+            .map(|d| d.as_ref())
+    }
+
+    pub fn add_device(&mut self, device: Box<dyn Device>) {
+        self.devices.push(device);
+    }
+
+    pub fn get_devices(&self) -> Vec<&dyn Device> {
+        self.devices.iter().map(|device| device.as_ref()).collect()
+    }
+
+    pub fn get_socket(&self) -> &Socket {
+        &self.socket
+    }
 }

@@ -4,5 +4,7 @@ pub mod kitchen;
 pub mod living_room;
 pub mod report;
 pub mod room;
+pub mod room_trait;
 pub mod socket;
 pub mod thermometer;
+pub mod tv;

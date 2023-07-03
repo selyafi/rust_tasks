@@ -4,7 +4,7 @@ pub struct SmartHome {
     pub name: String,
     pub username: String,
     pub password: String,
-    pub rooms: Vec<Box<dyn Room>>,
+    pub rooms: Vec<Room>,
 }
 
 impl SmartHome {
@@ -17,21 +17,15 @@ impl SmartHome {
         }
     }
 
-    pub fn add_room(&mut self, room: Box<dyn Room>) {
+    pub fn add_room(&mut self, room: Room) {
         self.rooms.push(room);
     }
 
-    pub fn _get_rooms(&self) -> Vec<&dyn Room> {
-        self.rooms.iter().map(|room| room.as_ref()).collect()
+    pub fn get_rooms(&self) -> Vec<&Room> {
+        self.rooms.iter().collect()
     }
 
-    pub fn get_room(&self, name: String) -> Option<&dyn Room> {
-        for room in &self.rooms {
-            if room.get_name() == name {
-                let room = room.as_ref();
-                return Some(room);
-            }
-        }
-        None
+    pub fn get_room(&self, name: String) -> Option<&Room> {
+        self.rooms.iter().find(|&room| room.get_name() == name)
     }
 }

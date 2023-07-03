@@ -2,61 +2,73 @@ use crate::api::{
     device_info_provider::{BorrowingDeviceInfoProvider, OwningDeviceInfoProvider},
     smart_home,
 };
-use crate::types::{
-    bed_room::Bedroom, kitchen::Kitchen, living_room::LivingRoom, room::Room, socket::Socket,
-    thermometer::Thermometer,
-};
+use crate::types::{room::Room, socket::Socket, thermometer::Thermometer, tv::TV};
 
 mod api;
+mod tests;
 mod types;
 
 fn main() {
     let mut smart_home =
         smart_home::SmartHome::new("Home".to_string(), "user".to_string(), "pass".to_string());
-    let socket = Socket::new(
+
+    let mut living_room = Room::new(
+        "Living_Room".to_string(),
+        Socket::new(
+            "Living Room".to_string(),
+            "Socket".to_string(),
+            "On".to_string(),
+        ),
+        vec![
+            Box::new(Thermometer::new(
+                "Living Room".to_string(),
+                "Thermometer".to_string(),
+                "On".to_string(),
+            )),
+            Box::new(TV::new(
+                "Living Room".to_string(),
+                "Tv".to_string(),
+                "On".to_string(),
+            )),
+        ],
+    );
+    living_room.add_device(Box::new(TV::new(
         "Living Room".to_string(),
-        "Socket".to_string(),
+        "TV2".to_string(),
         "On".to_string(),
-    );
-    let thermometer = Thermometer::new(
-        "Living Room".to_string(),
-        "Thermometer".to_string(),
-        "On".to_string(),
-    );
+    )));
+    smart_home.add_room(living_room);
 
-    let mut living_room = LivingRoom::new("Living Room".to_string(), socket);
-    living_room.add_device(Box::new(thermometer));
-    smart_home.add_room(Box::new(living_room));
-
-    let socket = Socket::new(
+    let kitchen = Room::new(
         "Kitchen".to_string(),
-        "Socket".to_string(),
-        "On".to_string(),
+        Socket::new(
+            "Kitchen".to_string(),
+            "Socket".to_string(),
+            "On".to_string(),
+        ),
+        vec![Box::new(Thermometer::new(
+            "Kitchen".to_string(),
+            "Thermometer".to_string(),
+            "On".to_string(),
+        ))],
     );
-    let thermometer = Thermometer::new(
-        "Kitchen".to_string(),
-        "Thermometer".to_string(),
-        "On".to_string(),
-    );
+    smart_home.add_room(kitchen);
 
-    let mut kitchen = Kitchen::new("Kitchen".to_string(), socket);
-    kitchen.add_device(Box::new(thermometer));
-    smart_home.add_room(Box::new(kitchen));
-
-    let socket = Socket::new(
+    let bed_room = Room::new(
         "Bed Room".to_string(),
-        "Socket".to_string(),
-        "On".to_string(),
-    );
-    let thermometer = Thermometer::new(
-        "Bed Room".to_string(),
-        "Thermometer".to_string(),
-        "On".to_string(),
+        Socket::new(
+            "Bed Room".to_string(),
+            "Socket".to_string(),
+            "On".to_string(),
+        ),
+        vec![Box::new(Thermometer::new(
+            "Bed Room".to_string(),
+            "Thermometer".to_string(),
+            "On".to_string(),
+        ))],
     );
 
-    let mut bed_room = Bedroom::new("Bed Room".to_string(), socket);
-    bed_room.add_device(Box::new(thermometer));
-    smart_home.add_room(Box::new(bed_room));
+    smart_home.add_room(bed_room);
 
     let living_room_socket = {
         let living_room = smart_home.get_room("Living Room".to_string()).unwrap();
@@ -86,4 +98,18 @@ fn main() {
         "Smart Home: {}_{}_{}_{}",
         report2.room, report2.socket, report2.device, report2.value
     );
+
+    println!("------------------------------");
+
+    let rooms = smart_home.get_rooms();
+    for room in rooms {
+        println!("Room: {}", room.get_name());
+        let socket = room.get_socket();
+        println!("Socket: {}", socket.get_name());
+        let devices = room.get_devices();
+        for device in devices {
+            println!("Device: {}", device.get_name());
+        }
+        println!("------------------------------");
+    }
 }
