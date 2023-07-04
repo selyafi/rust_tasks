@@ -27,7 +27,7 @@ mod tests {
 
         assert_eq!(smart_home.get_rooms().len(), 1);
 
-        let room = smart_home.get_room("Kitchen".to_string());
+        let room = smart_home.get_room("Kitchen");
         assert!(room.is_some());
         assert_eq!(room.unwrap().get_name(), "Kitchen");
     }
