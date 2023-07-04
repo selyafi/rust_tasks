@@ -1,6 +1,5 @@
 use crate::types::{device_info_provider::DeviceInfoProvider, report::Report, room::Room};
 
-
 pub struct SmartHome {
     pub name: String,
     pub username: String,

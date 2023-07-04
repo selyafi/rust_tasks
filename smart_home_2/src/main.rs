@@ -1,6 +1,9 @@
 use crate::api::smart_home;
+use crate::types::{
+    borrowing_device_info_provider::BorrowingDeviceInfoProvider,
+    owning_device_info_provider::OwningDeviceInfoProvider,
+};
 use crate::types::{room::Room, socket::Socket, thermometer::Thermometer, tv::TV};
-use crate::types::{owning_device_info_provider::OwningDeviceInfoProvider, borrowing_device_info_provider::BorrowingDeviceInfoProvider};
 
 mod api;
 mod tests;
