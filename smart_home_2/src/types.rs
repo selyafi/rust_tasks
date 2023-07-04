@@ -8,3 +8,7 @@ pub mod room_trait;
 pub mod socket;
 pub mod thermometer;
 pub mod tv;
+pub mod device_info_provider;
+pub mod owning_device_info_provider;
+pub mod borrowing_device_info_provider;
+
