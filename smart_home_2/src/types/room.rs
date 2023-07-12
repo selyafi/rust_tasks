@@ -31,8 +31,14 @@ impl Room {
         self.devices.push(device);
     }
 
-    pub fn get_devices(&self) -> Vec<&dyn Device> {
-        self.devices.iter().map(|device| device.as_ref()).collect()
+    pub fn get_devices(&self) -> Result<Vec<&dyn Device>, String> {
+        let devices = &self.devices;
+        match devices {
+            devices if !devices.is_empty() => {
+                Ok(devices.iter().map(|device| device.as_ref()).collect())
+            }
+            _ => Err(format!("No devices in room {}", self.name)),
+        }
     }
 
     pub fn get_socket(&self) -> &Socket {

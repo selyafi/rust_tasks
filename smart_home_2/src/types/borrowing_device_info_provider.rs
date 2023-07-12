@@ -15,12 +15,27 @@ impl<'a, 'b> BorrowingDeviceInfoProvider<'a, 'b> {
 }
 
 impl<'a, 'b> DeviceInfoProvider for BorrowingDeviceInfoProvider<'a, 'b> {
-    fn get_device_info(&self) -> Report {
-        Report {
-            room: self.device.get_room(),
-            socket: self.socket.get_name(),
-            device: self.device.get_name(),
-            value: self.socket.get_value(),
+    fn get_device_info(&self) -> Result<Report, String> {
+        match (
+            self.device.get_room(),
+            self.device.get_name(),
+            self.socket.get_name(),
+            self.socket.get_value(),
+        ) {
+            (room, device, socket, socket_value)
+                if !room.is_empty()
+                    && !device.is_empty()
+                    && !socket.is_empty()
+                    && !socket_value.is_empty() =>
+            {
+                Ok(Report {
+                    room,
+                    socket,
+                    device,
+                    value: socket_value,
+                })
+            }
+            _ => Err("Room or socket is empty or there are no values".to_string()),
         }
     }
 }

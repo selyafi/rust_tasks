@@ -13,12 +13,16 @@ impl<'a> OwningDeviceInfoProvider<'a> {
 }
 
 impl<'a> DeviceInfoProvider for OwningDeviceInfoProvider<'a> {
-    fn get_device_info(&self) -> Report {
-        Report {
-            room: self.device.get_room(),
-            socket: self.device.get_value(),
-            device: "".to_string(),
-            value: "".to_string(),
+    fn get_device_info(&self) -> Result<Report, String> {
+        let device = self.device;
+        match (device.get_room(), device.get_value()) {
+            (room, value ) if !room.is_empty() && !value.is_empty() => Ok(Report {
+                room,
+                socket: value,
+                device: "".to_string(),
+                value: "".to_string(),
+            }),
+            _ => Err("Room or socket is empty".to_string()),
         }
     }
 }

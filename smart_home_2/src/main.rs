@@ -92,16 +92,34 @@ fn main() {
         BorrowingDeviceInfoProvider::new(living_room_socket, living_room_device)
     };
 
-    let report1 = smart_home.create_report(&info_provider);
-    let report2 = smart_home.create_report(&info_provider2);
-    println!(
-        "Smart Home: {}_{}_{}_{}",
-        report1.room, report1.socket, report1.device, report1.value
-    );
-    println!(
-        "Smart Home: {}_{}_{}_{}",
-        report2.room, report2.socket, report2.device, report2.value
-    );
+    smart_home
+        .create_report(&info_provider)
+        .map(|report| {
+            println!(
+                "Smart Home: {}_{}_{}_{}",
+                report.room, report.socket, report.device, report.value
+            );
+        })
+        .unwrap_or_else(|error| println!("Error: {}", error));
+
+    smart_home
+        .create_report(&info_provider2)
+        .map(|report| {
+            println!(
+                "Smart Home: {}_{}_{}_{}",
+                report.room, report.socket, report.device, report.value
+            );
+        })
+        .unwrap_or_else(|error| println!("Error: {}", error));
+
+    //     let report2 = smart_home
+    //     .create_report(&info_provider2)
+    //     .unwrap_or_else(|error| println!("Error: {}", error));
+
+    // println!(
+    //     "Smart Home: {}_{}_{}_{}",
+    //     report2.room, report2.socket, report2.device, report2.value
+    // );
 
     println!("------------------------------");
 
@@ -111,9 +129,13 @@ fn main() {
         let socket = room.get_socket();
         println!("Socket: {}", socket.get_name());
         let devices = room.get_devices();
-        for device in devices {
-            println!("Device: {}", device.get_name());
-        }
+        devices
+            .map(|devices| {
+                for device in devices {
+                    println!("Device: {}", device.get_name());
+                }
+            })
+            .unwrap_or_else(|error| println!("Error: {}", error));
         println!("------------------------------");
     }
 }

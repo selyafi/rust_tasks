@@ -42,7 +42,7 @@ mod tests {
         assert!(device.is_some());
         assert_eq!(device.unwrap().get_name(), "Device1");
 
-        let devices = room.get_devices();
+        let devices = room.get_devices().unwrap();
         assert_eq!(devices.len(), 2);
         assert_eq!(devices[0].get_name(), "Device1");
         assert_eq!(devices[1].get_name(), "Device2");
@@ -51,7 +51,7 @@ mod tests {
             name: "Device3".to_string(),
         });
         room.add_device(device3);
-        let devices = room.get_devices();
+        let devices = room.get_devices().unwrap();
         assert_eq!(devices.len(), 3);
         assert_eq!(devices[2].get_name(), "Device3");
     }

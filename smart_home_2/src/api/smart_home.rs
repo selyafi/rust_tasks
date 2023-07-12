@@ -29,7 +29,7 @@ impl SmartHome {
         self.rooms.iter().find(|&room| room.get_name() == name)
     }
 
-    pub fn create_report<T>(&self, info_provider: &T) -> Report
+    pub fn create_report<T>(&self, info_provider: &T) -> Result<Report, String>
     where
         T: DeviceInfoProvider,
     {
