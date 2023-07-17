@@ -1,3 +1,4 @@
+use crate::errors::smart_home_errors::SmartHomeError;
 use crate::types::device::Device;
 use crate::types::device_info_provider::DeviceInfoProvider;
 use crate::types::report::Report;
@@ -13,16 +14,18 @@ impl<'a> OwningDeviceInfoProvider<'a> {
 }
 
 impl<'a> DeviceInfoProvider for OwningDeviceInfoProvider<'a> {
-    fn get_device_info(&self) -> Result<Report, String> {
+    fn get_device_info(&self) -> Result<Report, SmartHomeError> {
         let device = self.device;
         match (device.get_room(), device.get_value()) {
-            (room, value ) if !room.is_empty() && !value.is_empty() => Ok(Report {
+            (room, value) if !room.is_empty() && !value.is_empty() => Ok(Report {
                 room,
                 socket: value,
                 device: "".to_string(),
                 value: "".to_string(),
             }),
-            _ => Err("Room or socket is empty".to_string()),
+            (room, _) if room.is_empty() => Err(SmartHomeError::NoRoom),
+            (_, device) if device.is_empty() => Err(SmartHomeError::NoSocket),
+            _ => Err(SmartHomeError::NoValue),
         }
     }
 }

@@ -1,4 +1,7 @@
-use crate::types::{device_info_provider::DeviceInfoProvider, report::Report, room::Room};
+use crate::{
+    errors::smart_home_errors::SmartHomeError,
+    types::{device_info_provider::DeviceInfoProvider, report::Report, room::Room},
+};
 
 pub struct SmartHome {
     pub name: String,
@@ -29,7 +32,7 @@ impl SmartHome {
         self.rooms.iter().find(|&room| room.get_name() == name)
     }
 
-    pub fn create_report<T>(&self, info_provider: &T) -> Result<Report, String>
+    pub fn create_report<T>(&self, info_provider: &T) -> Result<Report, SmartHomeError>
     where
         T: DeviceInfoProvider,
     {

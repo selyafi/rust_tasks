@@ -6,6 +6,7 @@ use crate::types::{
 use crate::types::{room::Room, socket::Socket, thermometer::Thermometer, tv::TV};
 
 mod api;
+pub mod errors;
 mod tests;
 mod types;
 
@@ -111,15 +112,6 @@ fn main() {
             );
         })
         .unwrap_or_else(|error| println!("Error: {}", error));
-
-    //     let report2 = smart_home
-    //     .create_report(&info_provider2)
-    //     .unwrap_or_else(|error| println!("Error: {}", error));
-
-    // println!(
-    //     "Smart Home: {}_{}_{}_{}",
-    //     report2.room, report2.socket, report2.device, report2.value
-    // );
 
     println!("------------------------------");
 

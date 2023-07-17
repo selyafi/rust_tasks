@@ -1,3 +1,4 @@
+use crate::errors::smart_home_errors::SmartHomeError;
 use crate::types::device::Device;
 use crate::types::socket::Socket;
 
@@ -31,13 +32,13 @@ impl Room {
         self.devices.push(device);
     }
 
-    pub fn get_devices(&self) -> Result<Vec<&dyn Device>, String> {
+    pub fn get_devices(&self) -> Result<Vec<&dyn Device>, SmartHomeError> {
         let devices = &self.devices;
         match devices {
             devices if !devices.is_empty() => {
                 Ok(devices.iter().map(|device| device.as_ref()).collect())
             }
-            _ => Err(format!("No devices in room {}", self.name)),
+            _ => Err(SmartHomeError::NoDevice),
         }
     }
 

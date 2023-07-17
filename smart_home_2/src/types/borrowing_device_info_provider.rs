@@ -1,3 +1,4 @@
+use crate::errors::smart_home_errors::SmartHomeError;
 use crate::types::device::Device;
 use crate::types::device_info_provider::DeviceInfoProvider;
 use crate::types::report::Report;
@@ -15,7 +16,7 @@ impl<'a, 'b> BorrowingDeviceInfoProvider<'a, 'b> {
 }
 
 impl<'a, 'b> DeviceInfoProvider for BorrowingDeviceInfoProvider<'a, 'b> {
-    fn get_device_info(&self) -> Result<Report, String> {
+    fn get_device_info(&self) -> Result<Report, SmartHomeError> {
         match (
             self.device.get_room(),
             self.device.get_name(),
@@ -35,7 +36,10 @@ impl<'a, 'b> DeviceInfoProvider for BorrowingDeviceInfoProvider<'a, 'b> {
                     value: socket_value,
                 })
             }
-            _ => Err("Room or socket is empty or there are no values".to_string()),
+            (room, _, _, _) if room.is_empty() => Err(SmartHomeError::NoRoom),
+            (_, device, _, _) if device.is_empty() => Err(SmartHomeError::NoDevice),
+            (_, _, socket, _) if socket.is_empty() => Err(SmartHomeError::NoSocket),
+            _ => Err(SmartHomeError::NoValue),
         }
     }
 }
