@@ -24,8 +24,8 @@ impl SmartHome {
         self.rooms.push(room);
     }
 
-    pub fn get_rooms(&self) -> Vec<&Room> {
-        self.rooms.iter().collect()
+    pub fn get_rooms(&mut self) -> &mut Vec<Room> {
+        &mut self.rooms
     }
 
     pub fn get_room(&self, name: &str) -> Option<&Room> {
@@ -37,5 +37,19 @@ impl SmartHome {
         T: DeviceInfoProvider,
     {
         info_provider.get_device_info()
+    }
+
+    pub fn delete_room(&mut self, room_name: &str) -> Result<(), SmartHomeError> {
+        let room_position = self
+            .rooms
+            .iter()
+            .position(|room| room.get_name() == room_name);
+        match room_position {
+            Some(index) => {
+                self.rooms.remove(index);
+                Ok(())
+            }
+            None => Err(SmartHomeError::DeleteRoomFailure),
+        }
     }
 }

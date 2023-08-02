@@ -7,6 +7,7 @@ pub enum SmartHomeError {
     NoSocket,
     NoDevice,
     NoValue,
+    DeleteRoomFailure,
 }
 
 impl Error for SmartHomeError {}
@@ -19,6 +20,7 @@ impl Display for SmartHomeError {
             NoSocket => write!(f, "no socket"),
             NoDevice => write!(f, "no device"),
             NoValue => write!(f, "no value"),
+            DeleteRoomFailure => write!(f, "failed to delete room"),
         }
     }
 }

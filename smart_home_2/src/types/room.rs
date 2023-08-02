@@ -42,6 +42,14 @@ impl Room {
         }
     }
 
+    pub fn remove_device(&mut self, name: &str) -> Option<Box<dyn Device>> {
+        let index = self.devices.iter().position(|d| d.get_name() == name);
+        match index {
+            Some(index) => Some(self.devices.remove(index)),
+            None => None,
+        }
+    }
+
     pub fn get_socket(&self) -> &Socket {
         &self.socket
     }

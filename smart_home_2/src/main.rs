@@ -115,8 +115,7 @@ fn main() {
 
     println!("------------------------------");
 
-    let rooms = smart_home.get_rooms();
-    for room in rooms {
+    for room in smart_home.get_rooms() {
         println!("Room: {}", room.get_name());
         let socket = room.get_socket();
         println!("Socket: {}", socket.get_name());
@@ -130,4 +129,29 @@ fn main() {
             .unwrap_or_else(|error| println!("Error: {}", error));
         println!("------------------------------");
     }
+
+    println!("-------Delete phase----------");
+    for room in smart_home.get_rooms() {
+        println!("Room: {}", room.get_name());
+        room.remove_device("Thermometer");
+        println!("removed Thermometer");
+        let devices = room.get_devices();
+        devices
+            .map(|devices| {
+                for device in devices {
+                    println!("Device: {}", device.get_name());
+                }
+            })
+            .unwrap_or_else(|error| println!("Error: {}", error));
+
+        println!("------ Split ----------");
+    }
+
+    if let Some(error) = smart_home.delete_room("Bed Room").err() {
+        println!("Error: {}", error)
+    }
+
+    smart_home.get_rooms().iter().for_each(|room| {
+        println!("Room: {}", room.get_name());
+    });
 }
