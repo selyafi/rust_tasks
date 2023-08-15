@@ -1,17 +1,17 @@
-mod chat;
+use std::{fs, thread};
+use std::error::Error;
+use stp::server::{StpConnection, StpServer};
+mod devices;
 mod handler;
 
-use chat::Chat;
+use devices::Devices;
 use handler::{Request, RequestHandler};
-use std::error::Error;
-use std::{fs, thread};
-use stp::server::{StpConnection, StpServer};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let addr =
         fs::read_to_string("settings/addr").unwrap_or_else(|_| String::from("127.0.0.1:55331"));
-    let server = StpServer::bind(addr)?;
-    let chat = Chat::default();
+    let server: StpServer = StpServer::bind(addr)?;
+    let devices = Devices::default();
 
     for connection in server.incoming() {
         let connection = match connection {
@@ -29,9 +29,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         println!("New client connected: {}", addr);
 
-        let chat = chat.clone();
+        let devices = devices.clone();
         thread::spawn(move || {
-            if handle_connection(connection, chat).is_err() {
+            if handle_connection(connection, devices).is_err() {
                 println!("Client disconnected: {}", addr);
             }
         });
@@ -39,8 +39,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn handle_connection(mut connection: StpConnection, chat: Chat) -> Result<(), anyhow::Error> {
-    let mut handler = RequestHandler::new(chat);
+fn handle_connection(mut connection: StpConnection, devices: Devices) -> Result<(), anyhow::Error> {
+    let mut handler = RequestHandler::new(devices);
     loop {
         let req_str = connection.recv_request()?;
         let req = Request::new(&req_str);
