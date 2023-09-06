@@ -50,7 +50,6 @@ impl Thermometer {
                 if let Err(err) = socket.recv_from(&mut buf) {
                     println!("error recieving value: {err}");
                 }
-
                 let val = f32::from_be_bytes(buf);
                 temperature_clone.set(val);
             } else {
