@@ -22,7 +22,7 @@ struct Temperature {
 
 impl DeviceValue for Temperature {
     type Value = f32;
- fn get(&self) -> Self::Value {
+    fn get(&self) -> Self::Value {
         *self.value.lock().unwrap()
     }
     fn set(&self, value: Self::Value) {
@@ -46,18 +46,16 @@ impl Thermometer {
         thread::spawn(move || loop {
             let initialized = is_initialized_clone.load(Ordering::SeqCst);
             if initialized {
-                
-            let mut buf = [0; 4];
-            if let Err(err) = socket.recv_from(&mut buf) {
-                println!("error recieving value: {err}");
-            }
+                let mut buf = [0; 4];
+                if let Err(err) = socket.recv_from(&mut buf) {
+                    println!("error recieving value: {err}");
+                }
 
-            let val = f32::from_be_bytes(buf);
-            temperature_clone.set(val);
+                let val = f32::from_be_bytes(buf);
+                temperature_clone.set(val);
             } else {
-               return;
+                return;
             }
-
         });
 
         Ok(Self {
