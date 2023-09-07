@@ -20,8 +20,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             "off" => Command::Off,
             "getvalue" => Command::GetValue,
             "ison" => Command::IsOn,
-            _ => Command::Unknown
-         };
+            _ => Command::Unknown,
+        };
 
         let response = client.run_command(command)?;
         println!("Response: {}", response);

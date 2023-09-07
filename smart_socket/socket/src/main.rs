@@ -56,12 +56,11 @@ impl SmartSocket {
                 Response::Ok
             }
             Command::IsOn => {
-                let resp = if self.enabled {
+                if self.enabled {
                     Response::Enabled
                 } else {
                     Response::Disabled
-                };
-                resp
+                }
             }
             Command::GetValue => {
                 let value = match self.enabled {

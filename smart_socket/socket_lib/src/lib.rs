@@ -5,7 +5,6 @@ use std::{
     net::{TcpStream, ToSocketAddrs},
 };
 
-
 #[derive(Debug)]
 pub enum Command {
     Off,
@@ -38,7 +37,6 @@ impl From<Command> for u8 {
         }
     }
 }
-
 
 #[derive(Debug, PartialEq)]
 pub enum Response {
@@ -97,7 +95,6 @@ pub struct SmartSocketClient {
     stream: TcpStream,
 }
 
-
 impl SmartSocketClient {
     pub fn new(server_address: impl ToSocketAddrs) -> Result<Self, Box<dyn Error>> {
         let stream = TcpStream::connect(server_address)?;
@@ -111,8 +108,6 @@ impl SmartSocketClient {
         Ok(buffer.into())
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {
