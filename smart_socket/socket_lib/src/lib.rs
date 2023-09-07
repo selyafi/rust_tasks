@@ -15,8 +15,8 @@ pub enum Command {
     Unknown,
 }
 
-impl Command {
-    pub fn from_u8(val: u8) -> Self {
+impl From<u8> for Command {
+    fn from(val: u8) -> Self {
         match val {
             0 => Self::Off,
             1 => Self::On,
@@ -25,23 +25,25 @@ impl Command {
             _ => Self::Unknown,
         }
     }
+}
 
-    pub fn to_u8(&self) -> u8 {
-        match self {
-            Self::Off => 0,
-            Self::On => 1,
-            Self::IsOn => 2,
-            Self::GetValue => 3,
-            Self::Unknown => 255,
+impl From<Command> for u8 {
+    fn from(cmd: Command) -> Self {
+        match cmd {
+            Command::Off => 0,
+            Command::On => 1,
+            Command::IsOn => 2,
+            Command::GetValue => 3,
+            Command::Unknown => 255,
         }
     }
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Response {
     Ok,
-    IsWorking,
+    Enabled,
     Disabled,
     Value(f32),
     Unknown,
@@ -51,7 +53,7 @@ impl From<[u8; 5]> for Response {
     fn from(bytes: [u8; 5]) -> Self {
         match bytes {
             [0, ..] => Self::Ok,
-            [1, ..] => Self::IsWorking,
+            [1, ..] => Self::Enabled,
             [2, ..] => Self::Disabled,
             [3, ..] => {
                 let mut buf = [0u8; 4];
@@ -68,7 +70,7 @@ impl From<Response> for [u8; 5] {
         let mut buffer = [0u8; 5];
         match resp {
             Response::Ok => {}
-            Response::IsWorking => buffer[0] = 1,
+            Response::Enabled => buffer[0] = 1,
             Response::Disabled => buffer[0] = 2,
             Response::Value(val) => {
                 buffer[0] = 3;
@@ -83,7 +85,7 @@ impl fmt::Display for Response {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Response::Ok => write!(f, "Ok"),
-            Response::IsWorking => write!(f, "Is Working"),
+            Response::Enabled => write!(f, "Is Working"),
             Response::Disabled => write!(f, "Disabled"),
             Response::Value(value) => write!(f, "Current Value: {}", value),
             Response::Unknown => write!(f, "Unknown"),
@@ -103,9 +105,56 @@ impl SmartSocketClient {
     }
 
     pub fn run_command(&mut self, command: Command) -> Result<Response, Box<dyn Error>> {
-        self.stream.write_all(&[command.to_u8()])?;
+        self.stream.write_all(&[command.into()])?;
         let mut buffer = [0u8; 5];
         self.stream.read_exact(&mut buffer)?;
         Ok(buffer.into())
+    }
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_run_command_off() -> Result<(), Box<dyn Error>> {
+        let mut client = SmartSocketClient::new("127.0.0.1:7890")?;
+        let response = client.run_command(Command::Off)?;
+        assert_eq!(response, Response::Ok);
+        Ok(())
+    }
+
+    #[test]
+    fn test_run_command_on() -> Result<(), Box<dyn Error>> {
+        let mut client = SmartSocketClient::new("127.0.0.1:7890")?;
+        let response = client.run_command(Command::On)?;
+        assert_eq!(response, Response::Enabled);
+        Ok(())
+    }
+
+    #[test]
+    fn test_run_command_get_value() -> Result<(), Box<dyn Error>> {
+        let mut client = SmartSocketClient::new("127.0.0.1:7890")?;
+        let response = client.run_command(Command::GetValue)?;
+        assert_eq!(response, Response::Value(42.0));
+        Ok(())
+    }
+
+    #[test]
+    fn test_run_command_is_on() -> Result<(), Box<dyn Error>> {
+        let mut client = SmartSocketClient::new("127.0.0.1:7890")?;
+        let response = client.run_command(Command::IsOn)?;
+        assert_eq!(response, Response::Disabled);
+        Ok(())
+    }
+
+    #[test]
+    fn test_run_command_unknown() -> Result<(), Box<dyn Error>> {
+        let mut client = SmartSocketClient::new("127.0.0.1:7890")?;
+        let response = client.run_command(Command::Unknown)?;
+        assert_eq!(response, Response::Unknown);
+        Ok(())
     }
 }
