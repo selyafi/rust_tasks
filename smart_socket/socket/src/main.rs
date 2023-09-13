@@ -78,6 +78,7 @@ impl SmartSocket {
     }
 }
 
+// do testing while socket is running
 #[cfg(test)]
 mod tests {
     use super::*;
