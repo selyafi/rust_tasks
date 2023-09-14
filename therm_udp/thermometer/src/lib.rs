@@ -5,9 +5,10 @@ use std::{
         atomic::{AtomicBool, Ordering},
         Arc, Mutex,
     },
-    thread,
     time::Duration,
 };
+
+use async_std::task;
 
 trait DeviceValue {
     type Value;
@@ -36,24 +37,26 @@ pub struct Thermometer {
 }
 
 impl Thermometer {
-    pub fn new<T: ToSocketAddrs>(address: T) -> Result<Self, Box<dyn Error>> {
+    pub async fn new<T: ToSocketAddrs>(address: T) -> Result<Self, Box<dyn Error>> {
         let socket = UdpSocket::bind(address)?;
         socket.set_read_timeout(Some(Duration::from_secs(1)))?;
         let is_initialized = Arc::new(AtomicBool::new(true));
         let temperature = Arc::new(Temperature::default());
         let temperature_clone = temperature.clone();
         let is_initialized_clone = is_initialized.clone();
-        thread::spawn(move || loop {
-            let initialized = is_initialized_clone.load(Ordering::SeqCst);
-            if initialized {
-                let mut buf = [0; 4];
-                if let Err(err) = socket.recv_from(&mut buf) {
-                    println!("error recieving value: {err}");
+        task::spawn(async move {
+            loop {
+                let initialized = is_initialized_clone.load(Ordering::SeqCst);
+                if initialized {
+                    let mut buf = [0; 4];
+                    if let Err(err) = socket.recv_from(&mut buf) {
+                        println!("error recieving value: {err}");
+                    }
+                    let val = f32::from_be_bytes(buf);
+                    temperature_clone.set(val);
+                } else {
+                    return;
                 }
-                let val = f32::from_be_bytes(buf);
-                temperature_clone.set(val);
-            } else {
-                return;
             }
         });
 

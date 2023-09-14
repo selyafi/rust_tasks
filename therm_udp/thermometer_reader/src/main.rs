@@ -1,10 +1,12 @@
 use std::{
-    net::{SocketAddr, UdpSocket},
-    thread,
+    net::SocketAddr,
     time::{Duration, Instant},
 };
 
-fn main() {
+use async_std::{net::UdpSocket as AsyncUdpSocket, task};
+
+#[async_std::main]
+async fn main() {
     let addr_ip = "127.0.0.1:4321";
     let args = std::env::args();
     let mut args = args.skip(1);
@@ -14,7 +16,9 @@ fn main() {
         .parse::<SocketAddr>()
         .expect("valid socket address expected");
     let addr_bind = "127.0.0.1:4320";
-    let socket = UdpSocket::bind(addr_bind).expect("failed to bind socket");
+    let socket = AsyncUdpSocket::bind(addr_bind)
+        .await
+        .expect("failed to bind socket");
     let start_value = Instant::now();
     println!("Start");
     loop {
@@ -25,8 +29,9 @@ fn main() {
         let buf = temperature.to_be_bytes();
         socket
             .send_to(&buf, socket_addr)
+            .await
             .expect("failed to send data");
-        thread::sleep(Duration::from_millis(100));
+        task::sleep(Duration::from_millis(100)).await;
     }
 }
 
