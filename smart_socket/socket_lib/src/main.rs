@@ -1,10 +1,10 @@
+use socket_lib::{Command, SmartSocketClient};
 use std::io::{self, Write};
 
-use socket_lib::{Command, SmartSocketClient};
-
-fn main() {
+#[tokio::main]
+async fn main() {
     let server_address = "127.0.0.1:7890";
-    let mut client = SmartSocketClient::new(server_address).unwrap();
+    let mut client = SmartSocketClient::new(server_address).await.unwrap();
 
     loop {
         print!("Enter command (on-1/off-2/getvalue-3/ison-4/exit): ");
@@ -21,7 +21,7 @@ fn main() {
         };
 
         let response = match command {
-            Some(command) => client.run_command(command).unwrap(),
+            Some(command) => client.run_command(command).await.unwrap(),
             None => {
                 println!("Exitting...");
                 break;
