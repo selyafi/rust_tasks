@@ -1,39 +1,33 @@
-use std::{
-    io::{Read, Write},
+use socket_lib::{Command, Response};
+use tokio::{
+    io::{AsyncReadExt, AsyncWriteExt},
     net::TcpListener,
 };
 
-use socket_lib::{Command, Response};
-fn main() {
+#[tokio::main]
+async fn main() {
     let server_addr = "127.0.0.1:7890";
-    let listener = TcpListener::bind(server_addr).unwrap();
+    let listener = TcpListener::bind(server_addr).await.unwrap();
     let mut smart_socket = SmartSocket::default();
     println!("Server listening on {}", server_addr);
 
-    for connection in listener.incoming() {
-        match connection {
-            Ok(mut stream) => {
-                let peer_addr = stream
-                    .peer_addr()
-                    .map(|a| a.to_string())
-                    .unwrap_or_else(|_| "unknown".into());
-                println!("Peer '{peer_addr}' connected");
+    loop {
+        let (mut stream, peer_addr) = listener.accept().await.unwrap();
+        println!("Peer '{}' connected", peer_addr);
 
-                let mut in_buffer = [0u8];
-                while stream.read_exact(&mut in_buffer).is_ok() {
-                    let response = smart_socket.process_command(in_buffer[0].into());
-                    let response_buf: [u8; 5] = response.into();
-                    if stream.write_all(&response_buf).is_err() {
-                        break;
-                    };
-                }
-
-                println!("Connection with {peer_addr} lost. Waiting for new connections...");
-            }
-            Err(err) => {
-                println!("Can't receive connection: {}", err);
-            }
+        let mut in_buffer = [0u8];
+        while stream.read_exact(&mut in_buffer).await.is_ok() {
+            let response = smart_socket.process_command(in_buffer[0].into());
+            let response_buf: [u8; 5] = response.into();
+            if stream.write_all(&response_buf).await.is_err() {
+                break;
+            };
         }
+
+        println!(
+            "Connection with {} lost. Waiting for new connections...",
+            peer_addr
+        );
     }
 }
 
@@ -88,7 +82,7 @@ mod tests {
         let mut smart_socket = SmartSocket::default();
         let response = smart_socket.process_command(Command::On);
         assert_eq!(response, Response::Ok);
-        assert!(!smart_socket.enabled);
+        assert!(smart_socket.enabled);
     }
 
     #[test]
