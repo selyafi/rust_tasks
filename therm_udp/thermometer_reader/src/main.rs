@@ -1,11 +1,10 @@
-use std::{
-    net::SocketAddr,
-    time::{Duration, Instant},
+use std::{net::SocketAddr, time::Duration};
+
+use tokio::{
+    net::UdpSocket,
+    time::{self, Instant},
 };
-
-use async_std::{net::UdpSocket as AsyncUdpSocket, task};
-
-#[async_std::main]
+#[tokio::main]
 async fn main() {
     let addr_ip = "127.0.0.1:4321";
     let args = std::env::args();
@@ -16,7 +15,7 @@ async fn main() {
         .parse::<SocketAddr>()
         .expect("valid socket address expected");
     let addr_bind = "127.0.0.1:4320";
-    let socket = AsyncUdpSocket::bind(addr_bind)
+    let socket = UdpSocket::bind(addr_bind)
         .await
         .expect("failed to bind socket");
     let start_value = Instant::now();
@@ -31,7 +30,7 @@ async fn main() {
             .send_to(&buf, socket_addr)
             .await
             .expect("failed to send data");
-        task::sleep(Duration::from_millis(100)).await;
+        time::sleep(Duration::from_millis(100)).await;
     }
 }
 

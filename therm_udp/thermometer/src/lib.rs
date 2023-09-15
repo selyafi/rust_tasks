@@ -8,8 +8,6 @@ use std::{
     time::Duration,
 };
 
-use async_std::task;
-
 trait DeviceValue {
     type Value;
     fn get(&self) -> Self::Value;
@@ -44,7 +42,7 @@ impl Thermometer {
         let temperature = Arc::new(Temperature::default());
         let temperature_clone = temperature.clone();
         let is_initialized_clone = is_initialized.clone();
-        task::spawn(async move {
+        tokio::spawn(async move {
             loop {
                 let initialized = is_initialized_clone.load(Ordering::SeqCst);
                 if initialized {

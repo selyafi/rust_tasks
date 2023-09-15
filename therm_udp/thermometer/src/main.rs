@@ -1,8 +1,7 @@
 use std::net::SocketAddr;
-
 use thermometer::Thermometer;
 
-#[async_std::main]
+#[tokio::main]
 async fn main() {
     let socket_addr = "127.0.0.1:4321".parse::<SocketAddr>().unwrap();
     let thermometer = Thermometer::new(socket_addr).await.unwrap();
@@ -13,7 +12,7 @@ async fn main() {
     }
 }
 
-#[async_std::test]
+#[tokio::test]
 async fn test_thermometer() {
     let socket_addr = "127.0.0.1:4321".parse::<SocketAddr>().unwrap();
     let thermometer = Thermometer::new(socket_addr).await.unwrap();
