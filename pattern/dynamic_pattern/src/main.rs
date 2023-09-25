@@ -1,59 +1,44 @@
-trait Coffee {
+trait Car {
     fn cost(&self) -> f64;
 }
 
-struct Espresso;
+struct WinterTyre;
 
-impl Coffee for Espresso {
+impl Car for WinterTyre {
     fn cost(&self) -> f64 {
-        1.0
+        100.0
     }
 }
 
-struct Latte;
+struct AutomaticGearShift;
 
-impl Coffee for Latte {
+impl Car for AutomaticGearShift {
     fn cost(&self) -> f64 {
-        2.0
+        450.0
     }
 }
 
-trait Topping: Coffee {
-    fn description(&self) -> String;
-}
+struct UpgradeCar<T: Car>(T);
 
-struct Milk<T: Coffee>(T);
-
-impl<T: Coffee> Coffee for Milk<T> {
+impl<T: Car> Car for UpgradeCar<T> {
     fn cost(&self) -> f64 {
-        self.0.cost()
-    }
-}
-
-impl<T: Coffee> Topping for Milk<T> {
-    fn description(&self) -> String {
-        format!("Milk, {}", self.0.cost())
+        self.0.cost() + 59.99 // Cost of upgrade
     }
 }
 
 fn main() {
-    let espresso = Espresso;
-    let latte = Latte;
+    let espresso = WinterTyre;
+    let latte = AutomaticGearShift;
 
-    println!("Espresso: ${}", espresso.cost());
-    println!("Latte: ${}", latte.cost());
+    println!("Winter Tyre: ${}", espresso.cost());
+    println!("Automatic Gear Shift: ${}", latte.cost());
 
-    let coffee_with_milk = Milk(espresso);
-    let coffee_with_double_milk = Milk(Milk(latte));
+    let coffee_with_milk = UpgradeCar(espresso);
+    let coffee_with_double_milk = UpgradeCar(UpgradeCar(latte));
 
+    println!("Car with winter tyre: ${}", coffee_with_milk.cost());
     println!(
-        "Coffee with Milk: ${}, Description: {}",
-        coffee_with_milk.cost(),
-        coffee_with_milk.description()
-    );
-    println!(
-        "Coffee with Double Milk: ${}, Description: {}",
-        coffee_with_double_milk.cost(),
-        coffee_with_double_milk.description()
+        "Car with automatic gear shift: ${}",
+        coffee_with_double_milk.cost()
     );
 }
