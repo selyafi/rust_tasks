@@ -1,44 +1,44 @@
-trait Coffee {
+trait Car {
     fn cost(&self) -> f64;
 }
 
-struct Espresso;
+struct WinterTyre;
 
-impl Coffee for Espresso {
+impl Car for WinterTyre {
     fn cost(&self) -> f64 {
-        1.0
+        100.0
     }
 }
 
-struct Latte;
+struct AutomaticGearShift;
 
-impl Coffee for Latte {
+impl Car for AutomaticGearShift {
     fn cost(&self) -> f64 {
-        2.0
+        450.0
     }
 }
 
-struct Milk<T: Coffee>(T);
+struct UpgradeCar<T: Car>(T);
 
-impl<T: Coffee> Coffee for Milk<T> {
+impl<T: Car> Car for UpgradeCar<T> {
     fn cost(&self) -> f64 {
-        self.0.cost() + 0.5 // Cost of milk
+        self.0.cost() + 59.99 // Cost of upgrade
     }
 }
 
 fn main() {
-    let espresso = Espresso;
-    let latte = Latte;
+    let winter_tyre = WinterTyre;
+    let automatic_gear = AutomaticGearShift;
 
-    println!("Espresso: ${}", espresso.cost());
-    println!("Latte: ${}", latte.cost());
+    println!("Winter Tyre: ${}", winter_tyre.cost());
+    println!("Automatic Gear Shift: ${}", automatic_gear.cost());
 
-    let coffee_with_milk = Milk(espresso);
-    let coffee_with_double_milk = Milk(Milk(latte));
+    let car_with_winter_tyre = UpgradeCar(winter_tyre);
+    let car_with_automatic_gear = UpgradeCar(automatic_gear);
 
-    println!("Coffee with Milk: ${}", coffee_with_milk.cost());
+    println!("Car with winter tyre: ${}", car_with_winter_tyre.cost());
     println!(
-        "Coffee with Double Milk: ${}",
-        coffee_with_double_milk.cost()
+        "Car with automatic gear shift: ${}",
+        car_with_automatic_gear.cost()
     );
 }
