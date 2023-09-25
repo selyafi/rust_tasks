@@ -1,26 +1,15 @@
-use std::error::Error;
-use std::fmt::{Display, Formatter};
+use thiserror::Error;
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum SmartHomeError {
+    #[error("no room")]
     NoRoom,
+    #[error("no socket")]
     NoSocket,
+    #[error("no device")]
     NoDevice,
+    #[error("no value")]
     NoValue,
+    #[error("failed to delete room")]
     DeleteRoomFailure,
-}
-
-impl Error for SmartHomeError {}
-
-impl Display for SmartHomeError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        use SmartHomeError::*;
-        match self {
-            NoRoom => write!(f, "no room"),
-            NoSocket => write!(f, "no socket"),
-            NoDevice => write!(f, "no device"),
-            NoValue => write!(f, "no value"),
-            DeleteRoomFailure => write!(f, "failed to delete room"),
-        }
-    }
 }
