@@ -2,20 +2,20 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 // Define the SmartHome struct
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SmartHome {
     pub name: String,
     pub rooms: HashMap<String, Room>,
 }
 
 // Define the Room struct
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Room {
     pub name: String,
     pub devices: HashMap<String, Device>,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Device {
     pub name: String,
 }
