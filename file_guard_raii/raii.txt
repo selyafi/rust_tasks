@@ -1,0 +1,1 @@
+RAII pattern, also known as the Resource Acquisition Is Initialization (RAII), a new pattern for me, but it is very useful.
