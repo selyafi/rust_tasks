@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "b8db9bab-6817-4556-8548-bcd2246bb822",
+		"name": "Rust webapi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "79420"
+	},
+	"item": [
+		{
+			"name": "Get all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:2333/",
+					"host": [
+						"localhost"
+					],
+					"port": "2333",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rooms",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n            \"name\": \"room2\",\r\n            \"devices\": {\r\n                \"device2\": {\r\n                    \"name\": \"device2\"\r\n                }\r\n            }\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:2333/rooms",
+					"host": [
+						"localhost"
+					],
+					"port": "2333",
+					"path": [
+						"rooms"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rooms -device",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n                \"device3\": {\r\n                    \"name\": \"device2\"\r\n                }\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:2333/rooms/room2/devices",
+					"host": [
+						"localhost"
+					],
+					"port": "2333",
+					"path": [
+						"rooms",
+						"room2",
+						"devices"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rooms delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:2333/rooms/room2",
+					"host": [
+						"localhost"
+					],
+					"port": "2333",
+					"path": [
+						"rooms",
+						"room2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "report",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:2333/report",
+					"host": [
+						"localhost"
+					],
+					"port": "2333",
+					"path": [
+						"report"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get room",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

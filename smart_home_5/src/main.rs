@@ -155,3 +155,25 @@ async fn main() -> std::io::Result<()> {
     .run()
     .await
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use actix_web::{test, App};
+
+    #[actix_web::test]
+    async fn test_index() {
+        let smart_home = SmartHome {
+            name: "My Smart Home".to_string(),
+            rooms: HashMap::new(),
+        };
+        let app_state = web::Data::new(AppState {
+            smart_home: Arc::new(Mutex::new(smart_home)),
+        });
+        let app = test::init_service(App::new().app_data(app_state).service(index)).await;
+
+        let req = test::TestRequest::get().uri("/").to_request();
+        let res = test::call_service(&app, req).await;
+        assert!(res.status().is_success());
+    }
+}
